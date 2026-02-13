@@ -11,15 +11,20 @@ class Fruit extends PositionComponent
     with HasGameRef<FruitCatcherGame>, CollisionCallbacks {
   final FruitType type;
   final double fallSpeed = 200;
-  final Random random = Random();
-  Fruit({super.position})
+  final Random _random = Random();
+  Fruit()
     : type = FruitType.values[Random().nextInt(FruitType.values.length)],
       super(size: Vector2.all(40));
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     anchor = Anchor.center;
     add(CircleHitbox());
+    double screenWidth = gameRef.size.x;
+    double randomX = _random.nextDouble() * (screenWidth - size.x);
+    randomX += size.x / 2;
+    position = Vector2(randomX, -50);
   }
 
   @override
@@ -32,8 +37,11 @@ class Fruit extends PositionComponent
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollision(intersectionPoints, other);
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
+    super.onCollisionStart(intersectionPoints, other);
     if (other is Basket) {
       gameRef.incrementScore();
       removeFromParent();
@@ -42,7 +50,6 @@ class Fruit extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
     final paint = Paint()..style = PaintingStyle.fill;
     switch (type) {
       case FruitType.apple:
