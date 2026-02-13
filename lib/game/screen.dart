@@ -17,7 +17,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    game = FruitCatcherGame();
+    game = FruitCatcherGame(scoreNotifier: counter);
     AudioManager().playBackgroundMusic();
   }
 
